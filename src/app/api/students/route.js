@@ -84,7 +84,7 @@ export async function POST(req) {
       } = body;
   
       // Validar campos obligatorios
-      if (!course || !name || !courseStartDay || !courseEndDay || (!!isMinor && !!age) || (!!phone && !!dni)) {
+      if (!course || !name || !courseStartDay || !courseEndDay || (isMinor != null && age != null) || (!phone && !dni)) {
         return NextResponse.json(
           { message: "Campos obligatorios faltantes" },
           { status: 400 }
