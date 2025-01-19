@@ -120,6 +120,19 @@ export async function POST(req) {
   
       // Buscar si el estudiante ya existe
       let student = await Students.findOne({ phone: phone, name: name });
+        // Buscar el curso
+      const courseDoc = await Course.findOne({ name: course });
+      if (!courseDoc) {
+        return NextResponse.json({ message: "Curso no encontrado" }, { status: 404 });
+      }
+
+        // Validar aforo
+      if (!haveToRegisterWithoutCapacity && courseDoc.capacity <= 0) {
+         return NextResponse.json(
+          { message: "No hay capacidad en este curso" },
+          { status: 400 }
+          );
+     }
   
       if (!student) {
         // Crear el estudiante
@@ -135,20 +148,6 @@ export async function POST(req) {
         });
       }
   
-      // Buscar el curso
-      const courseDoc = await Course.findOne({ name: course });
-      if (!courseDoc) {
-        return NextResponse.json({ message: "Curso no encontrado" }, { status: 404 });
-      }
-  
-      // Validar aforo
-      if (!haveToRegisterWithoutCapacity && courseDoc.capacity <= 0) {
-        return NextResponse.json(
-          { message: "No hay capacidad en este curso" },
-          { status: 400 }
-        );
-      }
-
       // Calcular el monto restante y el costo final
       const finalCost = amountCancelled >= courseDoc.cost ? courseDoc.cost : amountCancelled;
       const remainingAmount = courseDoc.cost - finalCost;
