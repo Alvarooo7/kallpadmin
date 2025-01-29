@@ -1,8 +1,35 @@
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/app/libs/mongodb';
-import transaction from '@/app/models/transaction';
+import Transaction from '@/app/models/transaction';
 import Product from '@/app/models/product';
+import { generateReport } from './report/report';
+import { getFilteredTransactions } from './report/filterTransactions';
 //import { uploadImageToBlobStorage } from '@/utils/blobStorage'; // Implementa esta función para manejar el upload de imágenes.
+
+export async function GET(req) {
+  try {
+    console.log(req)
+    // Parsear los parámetros
+    const { searchParams } = req.nextUrl;
+    const mode = searchParams.get("mode") || "filter";
+
+    if (mode === "report") {
+      // Lógica para generar reporte diario
+      return await generateReport(req);
+    }
+
+    // Lógica para filtrar transacciones
+    const transactions = await getFilteredTransactions(req);
+    return transactions;
+  } catch (error) {
+    console.log(error)
+    return NextResponse.json(
+      { message: "Error procesando la solicitud", error: error.message },
+      { status: 500 }
+    );
+  }
+};
+
 
 export async function POST(request) {
   try {
@@ -83,7 +110,7 @@ export async function POST(request) {
     }**/
 
     // Crear la nueva transacción
-    const newTransaction = await transaction.create({
+    const newTransaction = await Transaction.create({
       amount,
       action,
       type,
