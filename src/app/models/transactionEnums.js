@@ -5,6 +5,7 @@ export const TransactionAction = Object.freeze({
   });
   
   export const TransactionType = Object.freeze({
+    ENROLLMENT: 'ENROLLMENT',
     PROFESSOR_PAYMENT: "PROFESSOR_PAYMENT",
     PRODUCT_SALE: "PRODUCT_SALE",
     SERVICE_PAYMENT: "SERVICE_PAYMENT",

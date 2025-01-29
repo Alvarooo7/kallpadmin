@@ -17,7 +17,7 @@ const transaction = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: Object.values(TransactionType),
+    //enum: Object.values(TransactionType),
     default: TransactionType.OTHER,
     required: true,
   },
