@@ -6,6 +6,10 @@ const transaction = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  amount: {
+    type: Number,
+    required: true,
+  },
   quantity: {
     type: Number,
     default: 1,

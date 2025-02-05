@@ -4,7 +4,9 @@ import Transaction from '@/app/models/transaction';
 
 export async function getFilteredTransactions(req) {
   const { searchParams } = req.nextUrl;
+  console.log("===TRANSACTIONS")
 
+  console.log(JSON.stringify(searchParams))
   // Leer parámetros de consulta
   const limit = parseInt(searchParams.get("limit")) || 10; // Valor predeterminado: 10
   const offset = parseInt(searchParams.get("offset")) || 0; // Valor predeterminado: 0
@@ -45,6 +47,7 @@ export async function getFilteredTransactions(req) {
 
   await connectDB(); // Conexión a la base de datos
 
+  console.log(JSON.stringify(query))
   // Obtener el total de elementos
   const totalItems = await Transaction.countDocuments(query);
 

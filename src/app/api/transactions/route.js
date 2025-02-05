@@ -4,6 +4,9 @@ import Transaction from '@/app/models/transaction';
 import Product from '@/app/models/product';
 import { generateReport } from './report/report';
 import { getFilteredTransactions } from './report/filterTransactions';
+import { generateCode, generateTrxCode } from '@/app/utils/Utils';
+import Cors from 'cors';
+
 //import { uploadImageToBlobStorage } from '@/utils/blobStorage'; // Implementa esta función para manejar el upload de imágenes.
 
 export async function GET(req) {
@@ -20,6 +23,7 @@ export async function GET(req) {
 
     // Lógica para filtrar transacciones
     const transactions = await getFilteredTransactions(req);
+    console.log(JSON.stringify(transactions))
     return transactions;
   } catch (error) {
     console.log(error)
@@ -29,7 +33,6 @@ export async function GET(req) {
     );
   }
 };
-
 
 export async function POST(request) {
   try {
@@ -109,8 +112,10 @@ export async function POST(request) {
       }
     }**/
 
+    const code = generateTrxCode()
     // Crear la nueva transacción
     const newTransaction = await Transaction.create({
+      code,
       amount,
       action,
       type,
@@ -131,3 +136,7 @@ export async function POST(request) {
     );
   }
 }
+
+
+
+
