@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 import { PaymentMethod, TransactionAction, TransactionType } from "./transactionEnums";
 
 const transaction = new mongoose.Schema({
+  code: {
+    type: String,
+    required: true,
+  },
   amount: {
     type: Number,
     required: true,
@@ -45,6 +49,10 @@ const transaction = new mongoose.Schema({
   image_url: {
     type: String, // URL de la imagen asociada
     required: false,
+  },
+  client_id: {
+    type: String,
+    required: true,
   },
 }, {
   timestamps: true, // Agrega campos `createdAt` y `updatedAt`

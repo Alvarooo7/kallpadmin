@@ -6,6 +6,7 @@ import { generateReport } from './report/report';
 import { getFilteredTransactions } from './report/filterTransactions';
 import { generateCode, generateTrxCode } from '@/app/utils/Utils';
 import Cors from 'cors';
+import Client from '@/app/models/client';
 
 //import { uploadImageToBlobStorage } from '@/utils/blobStorage'; // Implementa esta función para manejar el upload de imágenes.
 
@@ -59,12 +60,12 @@ export async function POST(request) {
       );
     }
     
-    const { amount, action, type, description, date, operation_number, payment_method, image, productType } = data;
+    const { amount, action, type, description, date, operation_number, payment_method, image, productType, phone_origin } = data;
 
     // Validar los campos obligatorios
-    if (!amount || !action || !type || !description) {
+    if (!amount || !action || !type || !description || !phone_origin) {
       return NextResponse.json(
-        { message: 'Los campos amount, action, type, description y date son obligatorios.' },
+        { message: 'Los campos amount, action, type, description, phone_origin y date son obligatorios.' },
         { status: 400 }
       );
     }
@@ -112,6 +113,9 @@ export async function POST(request) {
       }
     }**/
 
+    const client = await Client.findOne({ phone_origin });
+    console.log(JSON.stringify(client))
+
     const code = generateTrxCode()
     // Crear la nueva transacción
     const newTransaction = await Transaction.create({
@@ -123,6 +127,7 @@ export async function POST(request) {
       date: parsedDate.toISOString(), // Guardar fecha estandarizada en formato ISO.
       operation_number,
       payment_method,
+      client_id: client.code
       //image_url: imageUrl,
     });
 
