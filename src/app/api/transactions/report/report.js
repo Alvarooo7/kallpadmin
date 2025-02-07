@@ -27,7 +27,7 @@ export async function generateReport(request) {
         endOfPeriod = new Date(end);
     } else {
         startOfPeriod = startDate ? new Date(new Date(startDate).getTime()) : null;
-        endOfPeriod = endDate ? new Date(new Date(endDate).getTime()) : null;
+        endOfPeriod = endDate ? new Date(new Date(endDate).setUTCHours(23, 59, 59, 999)) : null;
     }
 
     const dateFilter = {};
