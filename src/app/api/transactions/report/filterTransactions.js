@@ -1,6 +1,12 @@
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/app/libs/mongodb';
 import Transaction from '@/app/models/transaction';
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+import dayjs from "dayjs";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 export async function getFilteredTransactions(req) {
   const { searchParams } = req.nextUrl;
@@ -38,10 +44,10 @@ export async function getFilteredTransactions(req) {
   if (startDate || endDate) {
     query.date = {};
     if (startDate) {
-      query.date.$gte = new Date(startDate); // Fecha de inicio
+      query.date.$gte = dayjs(startDate).tz("America/Lima").toDate();
     }
     if (endDate) {
-      query.date.$lte = new Date(endDate); // Fecha de fin
+      query.date.$lte = dayjs(endDate).tz("America/Lima").endOf("day").toDate();
     }
   }
 

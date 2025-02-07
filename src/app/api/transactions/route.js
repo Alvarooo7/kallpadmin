@@ -113,7 +113,7 @@ export async function POST(request) {
       }
     }**/
 
-    const client = await Client.findOne({ phone_origin });
+    const client = await Client.findOne({ phone: phone_origin });
     console.log(JSON.stringify(client))
 
     const code = generateTrxCode()
