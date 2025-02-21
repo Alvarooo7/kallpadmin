@@ -76,6 +76,15 @@ export async function POST(request) {
       return NextResponse.json({ message: 'El formato de fecha es inválido.' }, { status: 400 });
     }
 
+    const client = await Client.findOne({ phone: phone_origin });
+    if (!client) {
+      return NextResponse.json(
+        { message: 'No se encuentra registrado, por favor registrarse para poder usar el bot.' },
+        { status: 400 }
+      );
+    }
+    console.log(JSON.stringify(client))
+
     // Manejo opcional de stock
     if (productType) {
         // Intentar buscar el producto en el inventario
@@ -112,9 +121,6 @@ export async function POST(request) {
         );
       }
     }**/
-
-    const client = await Client.findOne({ phone: phone_origin });
-    console.log(JSON.stringify(client))
 
     const code = generateTrxCode()
     // Crear la nueva transacción

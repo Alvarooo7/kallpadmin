@@ -9,7 +9,6 @@ export async function PATCH(request, { params }) {
 
     // Parsear los datos del request
     const { id } = params; // Obtiene el ID desde la URL dinámica
-    
     const rawBody = await request.text();
     const cleanedBody = rawBody
       .replace(/`/g, '') 
@@ -113,3 +112,31 @@ try {
     );
   }
 }
+
+
+/*
+    
+    const newClientId = 'KALLPAd5af0b3';
+    const batchSize = 200; // Tamaño del lote
+    let updatedCount = 0;
+    
+    while (updatedCount < 2000) {
+      // Obtener un lote de documentos sin el nuevo clientId
+      const batch = await Transaction.find({ client_id: { $ne: newClientId } }).limit(batchSize);
+      console.log(JSON.stringify(batch))
+      if (batch.length === 0) break; // Si no hay más documentos, salimos
+  
+      // Actualizar documentos en el lote
+      const ids = batch.map(doc => doc._id);
+      console.log(JSON.stringify(ids))
+
+      const result = await Transaction.updateMany({ _id: { $in: ids } }, { client_id: newClientId });
+      console.log(JSON.stringify(result))
+
+      updatedCount += result.modifiedCount;
+      console.log(`Actualizados ${updatedCount} registros...`);
+    }
+  
+    return { totalUpdated: updatedCount };
+
+*/

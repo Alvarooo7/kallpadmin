@@ -12,6 +12,14 @@ export async function generateReport(request) {
     const groupBy = searchParams.get("groupBy") || "daily"; // 'daily', 'weekly', 'monthly', 'yearly'
     const includeDetails = searchParams.get("details") === "true"; // Include transaction details
     const includeBalance = searchParams.get("balance") === "true"; // Include balance report
+    const clientId = searchParams.get("clientId");
+
+    if (!clientId) {
+        return NextResponse.json(
+          { message: 'El campo clientId es obligatorio.' },
+          { status: 400 }
+        );
+    }
 
     // Establecer zona horaria para Perú (UTC-5)
     const peruTimezoneOffset = -5 * 60 * 60 * 1000;
@@ -36,6 +44,7 @@ export async function generateReport(request) {
 
     const query = {
         ...(Object.keys(dateFilter).length > 0 && { date: dateFilter }),
+        ...(clientId && { client_id: clientId })
     };
 
     console.log("== QUERY", JSON.stringify(query));
@@ -72,6 +81,7 @@ export async function generateReport(request) {
                 _id: {
                     period: periodGrouping[groupBy] || periodGrouping.daily,
                     action: "$action",
+                    client_id: "$client_id",
                 },
                 totalAmount: { $sum: "$amount" },
                 count: { $sum: 1 },
@@ -88,24 +98,31 @@ export async function generateReport(request) {
         report.forEach(({ _id, totalAmount }) => {
             const period = _id.period;
             const action = _id.action;
-            
-            if (!balanceMap[period]) {
-                balanceMap[period] = { income: 0, expense: 0, balance: 0 };
+            const client = _id.client_id; // Agregar clientId al balance
+
+            if (!balanceMap[client]) {
+                balanceMap[client] = {};
             }
-            
+            if (!balanceMap[client][period]) {
+                balanceMap[client][period] = { income: 0, expense: 0, balance: 0 };
+            }
+
             if (action === "INCOME") {
-                balanceMap[period].income += totalAmount;
+                balanceMap[client][period].income += totalAmount;
             } else if (action === "EXPENSE") {
-                balanceMap[period].expense += totalAmount;
+                balanceMap[client][period].expense += totalAmount;
             }
         });
 
-        balanceReport = Object.entries(balanceMap).map(([period, { income, expense }]) => ({
-            period,
-            income,
-            expense,
-            balance: income - expense,
-        }));
+        balanceReport = Object.entries(balanceMap).flatMap(([clientId, periods]) =>
+            Object.entries(periods).map(([period, { income, expense }]) => ({
+                clientId,
+                period,
+                income,
+                expense,
+                balance: income - expense,
+            }))
+        );
     }
 
     let transactions = [];
