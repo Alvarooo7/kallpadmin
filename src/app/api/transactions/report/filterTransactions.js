@@ -22,6 +22,7 @@ export async function getFilteredTransactions(req) {
     const searchAction = searchParams.get("action") || "";
     const searchType = searchParams.get("type") || "";
     const searchDescription = searchParams.get("description") || "";
+    const code = searchParams.get("code") || "";
     const startDate = searchParams.get("startDate");
     const endDate = searchParams.get("endDate");
 
@@ -30,6 +31,8 @@ export async function getFilteredTransactions(req) {
     const query = { client_id: clientId };
     if (searchAction) query.action = searchAction;
     if (searchType) query.type = searchType;
+    if (code) query.code = code;
+
     if (searchDescription) query.description = { $regex: searchDescription, $options: "i" };
 
     if (startDate || endDate) {
