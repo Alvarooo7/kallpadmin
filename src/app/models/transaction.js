@@ -54,6 +54,12 @@ const transaction = new mongoose.Schema({
     type: String,
     required: true,
   },
+  category: {
+    type: String
+  },
+  location: {
+    type: String
+  },   
 }, {
   timestamps: true, // Agrega campos `createdAt` y `updatedAt`
 });

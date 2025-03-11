@@ -39,7 +39,6 @@ export async function POST(request) {
   try {
     // Conectar a la base de datos
     await connectDB();
-
     // Parsear los datos del request
     const rawBody = await request.text();
     // Eliminar el prefijo 'json ' (si existe) y las comillas invertidas
@@ -47,6 +46,7 @@ export async function POST(request) {
     .replace(/`/g, '') // Elimina todas las comillas invertidas
     .replace(/^\s*json\s*/i, '') // Elimina el prefijo "json " al inicio (si existe)
     .trim(); // Elimina espacios adicionales al inicio y al final  
+    console.log("== REQUEST" + cleanedBody);
 
     let data;
     console.log(cleanedBody)
@@ -60,7 +60,7 @@ export async function POST(request) {
       );
     }
     
-    const { amount, action, type, description, date, operation_number, payment_method, image, productType, phone_origin } = data;
+    const { amount, action, type, description, date, operation_number, payment_method, image, productType, phone_origin, category, location } = data;
 
     // Validar los campos obligatorios
     if (!amount || !action || !type || !description || !phone_origin) {
@@ -133,7 +133,9 @@ export async function POST(request) {
       date: parsedDate.toISOString(), // Guardar fecha estandarizada en formato ISO.
       operation_number,
       payment_method,
-      client_id: client.code
+      client_id: client.code,
+      category,
+      location
       //image_url: imageUrl,
     });
 
