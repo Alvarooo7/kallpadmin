@@ -7,6 +7,35 @@ export async function PATCH(request, { params }) {
     // Conectar a la base de datos
     await connectDB();
 
+    const newClientId = 'KALLPAd5af0b3';
+    const batchSize = 200; // Tamaño del lote
+    let updatedCount = 0;
+    
+    // Fecha límite: 12 de marzo de 2025
+    const dateThreshold = new Date('2025-03-12');
+    console.log("Empezó");
+
+        // Obtener un lote de documentos
+        const batch = await Transaction.find({ date: { $gt: dateThreshold } }).limit(batchSize);
+        console.log(JSON.stringify(batch));
+
+        // Construir operaciones de actualización en batch
+        const bulkOps = batch.map(doc => ({
+            updateOne: {
+                filter: { _id: doc._id },
+                update: { $set: { date: doc.createdAt } }
+            }
+        }));
+
+        // Ejecutar actualización en batch
+        await Transaction.bulkWrite(bulkOps);
+
+        updatedCount += batch.length;
+        console.log(`Actualizados ${updatedCount} registros...`);
+  
+
+    return { totalUpdated: updatedCount };
+
     // Parsear los datos del request
     const { id } = params; // Obtiene el ID desde la URL dinámica
     const rawBody = await request.text();
